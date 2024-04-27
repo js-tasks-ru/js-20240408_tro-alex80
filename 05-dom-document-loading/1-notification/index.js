@@ -38,8 +38,7 @@ export default class NotificationMessage {
   }
 
   createTemplate() {
-    return `
-    <div class="notification ${this.type}" style="--value:${this.duration}ms">
+    return (`<div class="notification ${this.type}" style="--value:${this.duration}ms">
       <div class="timer"></div>
       <div class="inner-wrapper">
         <div class="notification-header">${this.type}</div>
@@ -47,6 +46,6 @@ export default class NotificationMessage {
           ${this.message}
         </div>
       </div>
-    </div>`;
+    </div>`);
   }
 }
