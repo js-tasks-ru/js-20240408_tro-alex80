@@ -2,6 +2,8 @@ export default class DoubleSlider {
   element;
   subElements;
   curThumbElem;
+  componentWidth;
+  componentLeft;
 
   constructor({
     min = 20,
@@ -22,14 +24,18 @@ export default class DoubleSlider {
   render() {
     this.element = this.createElement(this.createTemplate());
     this.subElements = this.getSubElements();
-    document.addEventListener('pointerdown', this.handlePointerDown);
+    this.initEvents();
+  }
+
+  initEvents() {
+    const {thumbLeft, thumbRight} = this.subElements;
+    thumbLeft.addEventListener('pointerdown', this.handlePointerDown);
+    thumbRight.addEventListener('pointerdown', this.handlePointerDown);
   }
 
   handlePointerMove = (event) => {
-    const { thumbLeft, thumbRight, progress, inner, from, to } = this.subElements;
-    const { width, left } = inner.getBoundingClientRect();
-
-    const value = this.calcValue(event.clientX, left, width);
+    const { thumbLeft, thumbRight, progress, from, to } = this.subElements;
+    const value = this.calcValue(event.clientX);
 
     if (!this.curThumbElem || value < this.min || value > this.max) return;
 
@@ -42,8 +48,17 @@ export default class DoubleSlider {
     }
   }
 
-  calcValue(clientX, left, width) {
-    return (clientX - left) * (this.max - this.min) / width + this.min;
+  getComponentBoxData() {
+    const { inner } = this.subElements;
+    this.componentWidth = inner.getBoundingClientRect().width;
+    this.componentLeft = inner.getBoundingClientRect().left;
+  }
+
+  calcValue(clientX) {
+    if (!this.componentWidth) {
+      this.getComponentBoxData();
+    }
+    return (clientX - this.componentLeft) * (this.max - this.min) / this.componentWidth + this.min;
   }
 
   updateLeftThumb(value, from, thumbLeft, progress) {
@@ -136,8 +151,6 @@ export default class DoubleSlider {
   }
 
   removeEvents() {
-    document.removeEventListener('pointermove', this.handlePointerMove);
-    document.removeEventListener('pointerup', this.handlePointerUp);
     document.removeEventListener('pointerdown', this.handlePointerDown);
   }
 
