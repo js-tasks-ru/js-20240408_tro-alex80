@@ -1,6 +1,8 @@
 export default class DoubleSlider {
   element;
   subElements;
+  curThumbElem;
+
   constructor({
     min = 20,
     max = 100,
