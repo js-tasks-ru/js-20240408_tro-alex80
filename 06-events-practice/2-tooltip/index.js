@@ -1,6 +1,5 @@
 class Tooltip {
   static instance = null;
-  events = ['pointerover', 'pointermove', 'pointerout']
 
   constructor() {
     if (Tooltip.instance !== null) {
@@ -21,30 +20,36 @@ class Tooltip {
   }
 
   addEvents() {
-    this.events.map(event =>
-      document.addEventListener(event, this.handlerPointer));
+    document.addEventListener('pointerover', this.handlerPointerOver);
+    document.addEventListener('pointermove', this.handlerPointerMove);
+    document.addEventListener('pointerout', this.handlerPointerOut);
   }
 
   removeEvents() {
-    this.events.map(event =>
-      document.removeEventListener(event, this.handlerPointer));
+    document.removeEventListener('pointerover', this.handlerPointerOver);
+    document.removeEventListener('pointermove', this.handlerPointerMove);
+    document.removeEventListener('pointerout', this.handlerPointerOut);
   }
 
-  handlerPointer = (event) => {
+  handlerPointerOver = (event) => {
+    const text = event.target.dataset.tooltip;
+    if (!text) return;
+    this.render(text);
+  }
+
+  handlerPointerMove = (event) => {
+    const text = event.target.dataset.tooltip;
+    if (!text) return;
+
+    this.element.style.top = event.clientY + 'px';
+    this.element.style.left = event.clientX + 'px';
+  }
+
+  handlerPointerOut = (event) => {
     const text = event.target.dataset.tooltip;
 
-    if (event.type === 'pointerover' && text) {
-      this.render(text);
-    }
-
-    if (event.type === 'pointermove' && text) {
-      this.element.style.top = event.clientY + 'px';
-      this.element.style.left = event.clientX + 'px';
-    }
-
-    if (event.type === 'pointerout' && !text) {
-      this.element.remove();
-    }
+    if (text) return;
+    this.element.remove();
   }
 
   render(text = '') {
