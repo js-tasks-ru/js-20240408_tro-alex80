@@ -26,13 +26,15 @@ export default class SortableTableV2 extends SortableTableV1 {
     const order = column.order === 'desc' ? 'asc' : 'desc';
 
     this.isSortLocally ?
-      this.sort(column.id, order) :
+      this.sortOnClient(column.id, order) :
       this.sortOnServer(column.id, order) ;
   }
 
-  sortOnServer(column, order) {
-  //   TODO sorting on the server side
+  sortOnClient(column, order) {
+    this.sort(column, order);
   }
+
+  sortOnServer(column, order) {}
 
   destroy() {
     super.destroy();
